@@ -6,10 +6,10 @@
 
 ## Setup
 
-    copy .env.example and edit with your own AWS credentials
+copy .env.example and edit with your own AWS credentials
     
-    Login to the AWS console and tag the volumes you want to snapshot with the proper tags.
-    You can tag a volume for scheduling by tagging it with "Key" "schedule" and a "Value" which is a valid CRON expression, like 0 23 * * *.
+Login to the AWS console and tag the volumes you want to snapshot with the proper tags.
+You can tag a volume for scheduling by tagging it with "Key" "schedule" and a "Value" which is a valid CRON expression, like 0 23 * * *.
     
 ## Usage
     
