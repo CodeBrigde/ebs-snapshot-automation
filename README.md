@@ -1,4 +1,4 @@
-# Simple transfer.sh client
+# EBS Snapshot Automation
 
 ## Installation
 
