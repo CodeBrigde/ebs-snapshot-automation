@@ -1,0 +1,24 @@
+{
+    "name": "codebridge/ebs-snapshot-automation",
+    "description": "Automatically create snapshots for your AWS EBS volumes",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Hoogerwerf",
+            "email": "kevin@codebridge.nl"
+        }
+    ],
+    "require": {
+        "aws/aws-sdk-php": "^3.18",
+        "symfony/console": "^3.0",
+        "illuminate/console": "^5.2",
+        "mtdowling/cron-expression": "^1.1",
+        "vlucas/phpdotenv": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "CodeBridge\\EbsSnapshotAutomation\\": "src/"
+        }
+    }
+}
