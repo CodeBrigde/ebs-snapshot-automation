@@ -12,10 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use CodeBridge\EbsSnapshotAutomation\Services\Ec2Service;
 use CodeBridge\EbsSnapshotAutomation\Scheduler;
 
-use Cron\CronExpression;
-use Carbon\Carbon;
-
-class ScheduledSnapshotsCommand extends Command
+class RunScheduledCommands extends Command
 {
     protected $cache;
     protected $scheduler;
@@ -31,8 +28,8 @@ class ScheduledSnapshotsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('volumes:snapshot')
-            ->setDescription('Check all schedules and create snapshot accordingly');
+            ->setName('scheduler:run')
+            ->setDescription('Check all schedules and run commands accordingly');
     }
 
 
@@ -45,6 +42,21 @@ class ScheduledSnapshotsCommand extends Command
         $volumes = $this->cache->retrieve('volumes');
 
         $ec2 = new Ec2Service();
+
+        $this->scheduler->call(
+            function ($params) {
+                $ec2 = $params['ec2'];
+                $cache = $params['cache'];
+
+                $schedulableVolumes = $ec2->getAllSchedulableVolumes();
+
+                $cache->store('volumes', $schedulableVolumes);
+            },
+            [
+                'ec2' => $ec2,
+                'cache' => $this->cache
+            ]
+        )->cron(getenv('CACHE_INTERVAL'));
 
         foreach ($volumes as $volume) {
 
@@ -80,7 +92,6 @@ class ScheduledSnapshotsCommand extends Command
                     'ec2' => $ec2,
                     'volume' => $volume,
                     'output' => $output
-
                 ]
             )->cron($volume['schedule']);
         }

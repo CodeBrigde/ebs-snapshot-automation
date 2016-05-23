@@ -9,7 +9,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Console\Application;
 
 use CodeBridge\EbsSnapshotAutomation\Commands\ListVolumesCommand;
-use CodeBridge\EbsSnapshotAutomation\Commands\ScheduledSnapshotsCommand;
+use CodeBridge\EbsSnapshotAutomation\Commands\RunScheduledCommands;
 use CodeBridge\EbsSnapshotAutomation\Cache;
 
 $env = new Dotenv\Dotenv(__DIR__);
@@ -25,5 +25,5 @@ $cache = new Cache(
 
 $application = new Application();
 $application->add(new ListVolumesCommand(null ,$cache));
-$application->add(new ScheduledSnapshotsCommand(null ,$cache));
+$application->add(new RunScheduledCommands(null ,$cache));
 $application->run();

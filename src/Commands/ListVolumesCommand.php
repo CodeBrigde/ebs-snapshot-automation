@@ -42,35 +42,8 @@ class ListVolumesCommand extends Command
             );
     }
 
-
-    protected function getScheduleTag($tags)
-    {
-        foreach ($tags as $tag) {
-            if ($tag['Key'] == 'schedule') {
-                return $tag['Value'];
-            }
-        }
-
-        return false;
-    }
-
-
-    protected function getNameTag($tags)
-    {
-        foreach ($tags as $tag) {
-            if ($tag['Key'] == 'Name') {
-                return $tag['Value'];
-            }
-        }
-
-        return false;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-
-        $schedulableVolumes = [];
         if ($input->getOption('show-cached')) {
             $schedulableVolumes = $this->cache->retrieve('volumes');
 
@@ -80,25 +53,7 @@ class ListVolumesCommand extends Command
 
         } else {
             $ec2 = new Ec2Service();
-
-            $volumes = $ec2->client->describeVolumes();
-            foreach ($volumes['Volumes'] as $volume) {
-                $schedule = $this->getScheduleTag($volume['Tags']);
-                $name = $this->getNameTag($volume['Tags']);
-
-                if (CronExpression::isValidExpression($schedule)) {
-
-                    $schedulableVolumes[] = [
-                        'name' => $name,
-                        'schedule' => $schedule,
-                        'id' => $volume['VolumeId']
-                    ];
-
-                    $output->writeln(str_pad($name, 16, ' ') . ' <info>' . str_pad($schedule, 16, ' ') . '</info>' . $volume['VolumeId']);
-                } else {
-                    $output->writeln(str_pad($name, 16, ' ') . ' <error>' . str_pad($schedule, 16, ' ') . '</error>' . $volume['VolumeId']);
-                }
-            }
+            $schedulableVolumes = $ec2->getAllSchedulableVolumes($output);
         }
 
         if ($input->getOption('cache')) {
